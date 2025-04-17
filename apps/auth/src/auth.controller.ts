@@ -25,4 +25,10 @@ export class AuthController {
   async authenticate(@Payload() data: any) {
     return data.user;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    return this.authService.logout(response);
+  }
 }

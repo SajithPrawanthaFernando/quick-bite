@@ -28,4 +28,13 @@ export class CreateUserDto {
 
   @IsString({ each: true })
   address?: string;
+
+  @IsString({ each: true })
+  fullname?: string;
+
+  @IsString({ each: true })
+  firstname?: string;
+
+  @IsString({ each: true })
+  lastname?: string;
 }

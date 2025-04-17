@@ -31,4 +31,9 @@ export class AuthService {
 
     return token;
   }
+
+  async logout(response: Response) {
+    response.clearCookie('Authentication');
+    return { message: 'Logged out successfully' };
+  }
 }
