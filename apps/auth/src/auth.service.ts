@@ -29,7 +29,19 @@ export class AuthService {
       expires,
     });
 
-    return token;
+    return {
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        roles: user.roles,
+        fullname: user.fullname,
+        phone: user.phone,
+        address: user.address,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      },
+    };
   }
 
   async logout(response: Response) {

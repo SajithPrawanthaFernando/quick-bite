@@ -9,6 +9,11 @@ import { AuthModule } from './auth.module';
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
   const configService = app.get(ConfigService);
+  app.enableCors({
+    origin: 'http://localhost:3002',
+    credentials: true,
+  });
+
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
