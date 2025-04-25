@@ -45,3 +45,17 @@ services:
       - .:/usr/src/app
   mongo:
     image: mongo
+
+  restuarants:
+    build:
+      context: .
+      dockerfile: ./apps/restaurants/Dockerfile
+      target: development
+    command: pnpm run start:dev restaurants
+    env_file:
+      - ./apps/restaurants/.env
+    ports:
+      - '3003:3003'
+    volumes:
+      - .:/usr/src/app
+  
