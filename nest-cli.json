@@ -56,6 +56,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/restaurants/tsconfig.app.json"
       }
+    },
+    "delivery": {
+      "type": "application",
+      "root": "apps/delivery",
+      "entryFile": "main",
+      "sourceRoot": "apps/delivery/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/delivery/tsconfig.app.json"
+      }
     }
   },
   "compilerOptions": {

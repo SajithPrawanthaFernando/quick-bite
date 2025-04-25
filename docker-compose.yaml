@@ -43,6 +43,18 @@ services:
       - ./apps/notifications/.env
     volumes:
       - .:/usr/src/app
+  delivery:
+    build:
+      context: .
+      dockerfile: ./apps/delivery/Dockerfile
+      target: development
+    command: pnpm run start:dev delivery
+    env_file:
+      - ./apps/delivery/.env
+    ports:
+      - '3004:3004'
+    volumes:
+      - .:/usr/src/app
   mongo:
     image: mongo
 
