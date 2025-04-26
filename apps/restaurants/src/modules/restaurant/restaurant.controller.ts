@@ -13,16 +13,10 @@ import {
   Patch,
   UnauthorizedException,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
-import { JwtAuthGuard } from '@app/common';
 
 @ApiTags('restaurants')
 @Controller('restaurants')
@@ -30,8 +24,6 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new restaurant' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -81,8 +73,6 @@ export class RestaurantController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update restaurant details' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -109,8 +99,6 @@ export class RestaurantController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete restaurant' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -129,8 +117,6 @@ export class RestaurantController {
   }
 
   @Get('/pending')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get pending restaurant approvals' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -149,8 +135,6 @@ export class RestaurantController {
   }
 
   @Patch(':id/temporary-closure')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Set temporary closure status' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -169,8 +153,6 @@ export class RestaurantController {
   }
 
   @Get(':id/approve')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Approve restaurant' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -185,8 +167,6 @@ export class RestaurantController {
   }
 
   @Get(':id/reject')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Reject restaurant' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -211,8 +191,6 @@ export class RestaurantController {
   }
 
   @Get('owner/:restaurantId/orders')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get restaurant orders' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -229,8 +207,6 @@ export class RestaurantController {
   }
 
   @Get('owner/:restaurantId/menu')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get restaurant menu' })
   @ApiResponse({
     status: HttpStatus.OK,

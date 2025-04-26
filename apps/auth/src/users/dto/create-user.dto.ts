@@ -22,19 +22,24 @@ export class CreateUserDto {
   @IsNotEmpty({ each: true })
   roles?: string[];
 
+  @IsOptional()
   @IsString({ each: true })
   @IsPhoneNumber('LK')
   phone?: string;
 
+  @IsOptional()
   @IsString({ each: true })
   address?: string;
 
+  @IsOptional()
   @IsString({ each: true })
   fullname?: string;
 
+  @IsOptional()
   @IsString({ each: true })
   firstname?: string;
 
+  @IsOptional()
   @IsString({ each: true })
   lastname?: string;
 }

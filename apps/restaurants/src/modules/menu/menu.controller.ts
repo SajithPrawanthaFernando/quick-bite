@@ -13,16 +13,10 @@ import {
   Query,
   UnauthorizedException,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MenuService } from './menu.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { JwtAuthGuard } from '@app/common';
 
 @ApiTags('menu')
 @Controller('menu')
@@ -69,8 +63,6 @@ export class MenuController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new menu item' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -89,8 +81,6 @@ export class MenuController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update menu item details' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -113,8 +103,6 @@ export class MenuController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete menu item' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -133,8 +121,6 @@ export class MenuController {
   }
 
   @Put(':id/availability')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Toggle menu item availability' })
   @ApiResponse({
     status: HttpStatus.OK,
