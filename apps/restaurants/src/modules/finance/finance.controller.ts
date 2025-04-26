@@ -14,12 +14,9 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@app/common';
-import { RolesGuard } from '@app/common/auth/roles.guard';
 
 @ApiTags('finance')
 @Controller('finance')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class FinanceController {
   constructor(private readonly financeService: FinanceService) {}

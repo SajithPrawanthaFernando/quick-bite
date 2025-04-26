@@ -6,7 +6,12 @@ export type CustomerDocument = Customer & Document;
 
 @Schema({ timestamps: true })
 export class Customer {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, unique: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'UserDocument',
+    required: true,
+    unique: true,
+  })
   user: UserDocument;
 
   @Prop({ required: true })

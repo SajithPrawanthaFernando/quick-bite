@@ -7,7 +7,6 @@ import {
   Param,
   Body,
   Query,
-  UseGuards,
   Req,
   HttpException,
   HttpStatus,
@@ -20,12 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { DisputeStatus } from '../dispute/enums/dispute-status.enum';
-import { JwtAuthGuard } from '@app/common';
 
 @ApiTags('admin')
 @Controller('admin')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -106,7 +102,6 @@ export class AdminController {
   }
 
   @Patch('restaurants/:id/verification')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update pending restaurant verification' })
   @ApiResponse({
     status: 200,
