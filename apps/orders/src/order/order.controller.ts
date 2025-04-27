@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { JwtAuthGuard, Roles } from '@app/common';
+import { CurrentUser, JwtAuthGuard, Roles, UserDto } from '@app/common';
 
 @Controller('orders')
 export class OrderController {
@@ -19,8 +19,12 @@ export class OrderController {
   }
 
   @Post()
-  async createOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.createOrder(createOrderDto);
+  async createOrder(
+    @Body() createOrderDto: CreateOrderDto,
+    @CurrentUser() user: UserDto,
+  ) {
+    console.log('Creating order for user:', user);
+    return this.orderService.createOrder(createOrderDto, user);
   }
 
   @Get(':id')

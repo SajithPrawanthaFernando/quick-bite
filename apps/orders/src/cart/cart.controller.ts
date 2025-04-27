@@ -12,7 +12,7 @@ import { CartService } from './cart.service';
 import { OrderService } from '../order/order.service';
 import { Order } from '../order/schemas/order.schema';
 import { Address } from '../order/dto/address.dto';
-import { JwtAuthGuard } from '@app/common';
+import { CurrentUser, JwtAuthGuard, UserDto } from '@app/common';
 
 @Controller('cart')
 export class CartController {
@@ -44,11 +44,27 @@ export class CartController {
     return this.cartService.clearCart(customerId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':customerId/checkout')
   async checkout(
     @Param('customerId') customerId: string,
-    @Body('deliveryAddress') deliveryAddress: Address, // Address object, not string anymore
+    @Body()
+    body: {
+      deliveryAddress: Address;
+      charge: {
+        amount: number;
+        card: {
+          number: string;
+          exp_month: number;
+          exp_year: number;
+          cvc: string;
+        };
+      };
+    },
+    @CurrentUser() user: UserDto,
   ): Promise<Order | any> {
+    const { deliveryAddress, charge } = body;
+
     const cart = await this.cartService.getCart(customerId);
 
     if (!cart || cart.items.length === 0) {
@@ -62,13 +78,17 @@ export class CartController {
       0,
     );
 
-    const order = await this.orderService.createOrder({
-      customerId,
-      items: cart.items,
-      deliveryAddress, // pass structured address
-      deliveryFee: totalDeliveryFee,
-      totalAmount: totalPrice + totalDeliveryFee,
-    });
+    const order = await this.orderService.createOrder(
+      {
+        customerId,
+        items: cart.items,
+        deliveryAddress,
+        deliveryFee: totalDeliveryFee,
+        totalAmount: totalPrice + totalDeliveryFee,
+        charge,
+      },
+      user,
+    );
 
     await this.cartService.clearCart(customerId);
 

@@ -5,13 +5,14 @@ import { CartService } from './cart.service';
 import { Cart, CartSchema } from './schemas/cart.schema';
 import { OrderModule } from '../order/order.module'; // Import OrderModule
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AUTH_SERVICE } from '@app/common';
+import { AUTH_SERVICE, LoggerModule, PAYMENTS_SERVICE } from '@app/common';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Cart.name, schema: CartSchema }]),
-    forwardRef(() => OrderModule), // Allow circular dependency
+    forwardRef(() => OrderModule),
+    LoggerModule,
     ClientsModule.registerAsync([
       {
         name: AUTH_SERVICE,
@@ -20,6 +21,17 @@ import { ConfigService } from '@nestjs/config';
           options: {
             host: configService.get('AUTH_HOST'),
             port: configService.get('AUTH_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: PAYMENTS_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('PAYMENTS_HOST'),
+            port: configService.get('PAYMENTS_PORT'),
           },
         }),
         inject: [ConfigService],
