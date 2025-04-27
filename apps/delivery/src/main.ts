@@ -8,12 +8,17 @@ import { DeliveryModule } from './delivery.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(DeliveryModule);
+
+  app.enableCors({
+    origin: 'http://localhost:4200', // your frontend
+    credentials: true,
+  });
+  
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useLogger(app.get(Logger));
   app.use(cookieParser());
   const configService = app.get(ConfigService);
   await app.listen(configService.get('PORT'));
 
-  console.log('Listening on port:', configService.get('PORT'));
 }
 bootstrap();

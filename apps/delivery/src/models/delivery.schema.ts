@@ -17,16 +17,20 @@ export class DeliveryDocument extends AbstractDocument {
 
   @Prop({ type: Object, required: true })
   pickupLocation: {
-    address: string;
-    latitude: number;
-    longitude: number;
+    houseNumber: string;
+    lane1: string;
+    lane2?: string;
+    city: string;
+    district: string;
   };
-
+  
   @Prop({ type: Object, required: true })
   deliveryLocation: {
-    address: string;
-    latitude: number;
-    longitude: number;
+    houseNumber: string;
+    lane1: string;
+    lane2?: string;
+    city: string;
+    district: string;
   };
 
   @Prop({ enum: ['picked', 'in_transit', 'delivered', 'cancelled'], default: 'picked' })
