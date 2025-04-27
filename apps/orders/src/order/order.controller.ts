@@ -23,8 +23,15 @@ export class OrderController {
     return this.orderService.createOrder(createOrderDto);
   }
 
+  @Get('out-for-delivery')
+  async getOrdersOutForDelivery() {
+    return this.orderService.getOrdersOutForDelivery();
+  }
+
   @Get(':id')
   async getOrder(@Param('id') id: string) {
+    console.log('called ++++++++++++++++++++++++');
+
     return this.orderService.getOrder(id);
   }
 

@@ -23,12 +23,17 @@ export class OrderService {
     return this.orderModel.findById(id).exec();
   }
 
-  async updateOrder(id: string, updates: Partial<Order>): Promise<Order | null> {
+  async updateOrder(
+    id: string,
+    updates: Partial<Order>,
+  ): Promise<Order | null> {
     return this.orderModel.findByIdAndUpdate(id, updates, { new: true }).exec();
   }
 
   async cancelOrder(id: string): Promise<Order | null> {
-    return this.orderModel.findByIdAndUpdate(id, { status: 'cancelled' }, { new: true }).exec();
+    return this.orderModel
+      .findByIdAndUpdate(id, { status: 'cancelled' }, { new: true })
+      .exec();
   }
 
   async getOrderStatusById(orderId: string): Promise<any> {
@@ -38,7 +43,7 @@ export class OrderService {
     }
     return { status: order.status };
   }
-  
+
   async getAllOrdersForCustomer(customerId: string): Promise<any> {
     return this.orderModel.find({ customerId }).exec();
   }
@@ -48,11 +53,14 @@ export class OrderService {
     if (!order) {
       return { message: 'Order not found' };
     }
-  
+
     order.status = newStatus;
     await order.save();
-  
+
     return { message: `Order status updated to ${newStatus}`, order };
-  }  
-  
+  }
+
+  async getOrdersOutForDelivery(): Promise<Order[]> {
+    return this.orderModel.find().exec();
+  }
 }

@@ -7,6 +7,8 @@ export type OrderDocument = Order & Document;
 export class Order {
   @Prop()
   customerId: string;
+  @Prop()
+  restuarantId: string;
 
   @Prop({ type: [{ itemId: String, name: String, quantity: Number, price: Number }] })
   items: {

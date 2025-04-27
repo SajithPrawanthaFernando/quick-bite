@@ -28,7 +28,7 @@ export class DeliveryDocument extends AbstractDocument {
   deliveryLocation: {
     houseNumber: string;
     lane1: string;
-    lane2?: string;
+    lane2?: string; 
     city: string;
     district: string;
   };
