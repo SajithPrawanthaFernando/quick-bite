@@ -7,21 +7,19 @@ import {
   Restaurant,
   RestaurantSchema,
 } from '../modules/restaurant/schemas/restaurant.schema';
-import { Order, OrderSchema } from '../modules/order/schemas/order.schema';
 import {
   MenuItem,
   MenuItemSchema,
 } from '../modules/menu/schemas/menu-item.schema';
+import { AUTH_SERVICE, UserDocument, UserSchema } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AUTH_SERVICE } from '@app/common';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Customer.name, schema: CustomerSchema },
+      { name: 'User', schema: UserSchema },
       { name: Restaurant.name, schema: RestaurantSchema },
-      { name: Order.name, schema: OrderSchema },
       { name: MenuItem.name, schema: MenuItemSchema },
     ]),
     ClientsModule.registerAsync([

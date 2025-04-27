@@ -33,13 +33,5 @@ export class CreateRestaurantDto {
   @IsOptional()
   logo?: string;
 
-  @ApiProperty({ example: 40.7128, description: 'Latitude coordinate' })
-  @IsNumber()
-  @IsNotEmpty()
-  latitude: number;
 
-  @ApiProperty({ example: -74.0060, description: 'Longitude coordinate' })
-  @IsNumber()
-  @IsNotEmpty()
-  longitude: number;
 }

@@ -18,12 +18,14 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import { JwtAuthGuard, Roles } from '@app/common';
 
 @ApiTags('Customer')
 @Controller('customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('restaurants')
   @ApiOperation({ summary: 'Get all approved restaurants' })
   @ApiQuery({ name: 'page', required: false, type: Number })

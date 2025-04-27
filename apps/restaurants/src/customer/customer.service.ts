@@ -9,10 +9,8 @@ import { getModelToken } from '@nestjs/mongoose';
 @Injectable()
 export class CustomerService {
   constructor(
-    @Inject(getModelToken(Restaurant.name))
-    private readonly restaurantModel: Model<Restaurant>,
-    @Inject(getModelToken(MenuItem.name))
-    private readonly menuItemModel: Model<MenuItem>,
+    @Inject(getModelToken(Restaurant.name)) private readonly restaurantModel: Model<Restaurant>,
+    @Inject(getModelToken(MenuItem.name)) private readonly menuItemModel: Model<MenuItem>,
   ) {}
 
   async getApprovedRestaurants(page: number = 1, limit: number = 10) {
@@ -20,7 +18,7 @@ export class CustomerService {
     const query = {
       isApproved: true,
       isActive: true,
-      isTemporarilyClosed: false,
+      isTemporarilyClosed: false
     };
 
     const [restaurants, total] = await Promise.all([
@@ -31,7 +29,7 @@ export class CustomerService {
         .skip(skip)
         .limit(limit)
         .exec(),
-      this.restaurantModel.countDocuments(query),
+      this.restaurantModel.countDocuments(query)
     ]);
 
     return {
@@ -40,8 +38,8 @@ export class CustomerService {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
-      },
+        totalPages: Math.ceil(total / limit)
+      }
     };
   }
 
@@ -61,17 +59,14 @@ export class CustomerService {
       .exec();
 
     // Group menu items by category
-    const menuByCategory = menuItems.reduce(
-      (acc: { [key: string]: MenuItem[] }, item) => {
-        const categoryName = item.category || 'Uncategorized';
-        if (!acc[categoryName]) {
-          acc[categoryName] = [];
-        }
-        acc[categoryName].push(item);
-        return acc;
-      },
-      {},
-    );
+    const menuByCategory = menuItems.reduce((acc: { [key: string]: MenuItem[] }, item) => {
+      const categoryName = item.category || 'Uncategorized';
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(item);
+      return acc;
+    }, {});
 
     return menuByCategory;
   }

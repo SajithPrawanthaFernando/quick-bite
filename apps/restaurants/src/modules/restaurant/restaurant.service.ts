@@ -1,31 +1,20 @@
 // src/modules/restaurant/restaurant.service.ts
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import { Model, Types, FilterQuery } from 'mongoose';
 import { Restaurant } from './schemas/restaurant.schema';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { UserDocument, UserSchema } from '@app/common';
 import { getModelToken } from '@nestjs/mongoose';
-import { Order } from '../order/schemas/order.schema';
 import { MenuItem } from '../menu/schemas/menu-item.schema';
-import { UserDocument } from '@app/common';
 
 @Injectable()
 export class RestaurantService {
   constructor(
-    @Inject(getModelToken('Restaurant'))
-    private readonly restaurantModel: Model<Restaurant>,
-    @Inject(getModelToken(UserDocument.name))
-    private readonly userModel: Model<UserDocument>,
-    @Inject(getModelToken(Order.name))
-    private readonly orderModel: Model<Order>,
-    @Inject(getModelToken(MenuItem.name))
-    private readonly menuItemModel: Model<MenuItem>,
+    @Inject(getModelToken('Restaurant')) private readonly restaurantModel: Model<Restaurant>,
+ /*   @Inject(getModelToken(UserDocument.name)) private readonly userModel: Model<UserDocument>,*/
+    @Inject(getModelToken(MenuItem.name)) private readonly menuItemModel: Model<MenuItem>,
   ) {}
 
   async getAllRestaurants(
@@ -33,10 +22,10 @@ export class RestaurantService {
     limit: number = 10,
     search?: string,
     cuisineType?: string,
-    rating?: number,
+    rating?: number
   ) {
     const skip = (page - 1) * limit;
-
+    
     const query: any = {};
 
     if (search) {
@@ -75,14 +64,9 @@ export class RestaurantService {
     };
   }
 
-  async getPendingRestaurants(
-    page: number = 1,
-    limit: number = 10,
-    userId: string,
-  ) {
+  async getPendingRestaurants(page: number = 1, limit: number = 10) {
     // Check if user is admin
-    const user = await this.userModel.findById(userId);
-
+ 
     const skip = (page - 1) * limit;
     const query = {
       isApproved: false,
@@ -112,7 +96,9 @@ export class RestaurantService {
   }
 
   async getRestaurantById(id: string) {
-    const restaurant = await this.restaurantModel.findById(id).exec();
+    const restaurant = await this.restaurantModel
+      .findById(id)
+      .exec();
 
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
@@ -121,35 +107,24 @@ export class RestaurantService {
     return restaurant;
   }
 
-  async createRestaurant(
-    createRestaurantDto: CreateRestaurantDto,
-    userId: string,
-  ): Promise<Restaurant> {
-    const { latitude, longitude, ...rest } = createRestaurantDto;
-
+  async createRestaurant(createRestaurantDto: CreateRestaurantDto, userId: string): Promise<Restaurant> {
+    const {  ...rest } = createRestaurantDto;
+    
     const newRestaurant = new this.restaurantModel({
       ...rest,
       owner: new Types.ObjectId(userId),
-      location: {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      },
-      latitude,
-      longitude,
+     
       isApproved: false,
       isActive: true,
+      status: 'pending', 
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     });
 
     return newRestaurant.save();
   }
 
-  async updateRestaurant(
-    id: string,
-    updateRestaurantDto: UpdateRestaurantDto,
-    userId: string,
-  ) {
+  async updateRestaurant(id: string, updateRestaurantDto: UpdateRestaurantDto, userId: string) {
     // Check if restaurant exists
     const restaurant = await this.restaurantModel.findById(id).exec();
 
@@ -170,9 +145,7 @@ export class RestaurantService {
     }
 
     if (restaurant.owner.toString() !== userId) {
-      throw new ForbiddenException(
-        'You do not have permission to update this restaurant',
-      );
+      throw new ForbiddenException('You do not have permission to update this restaurant');
     }
 
     return this.restaurantModel
@@ -187,12 +160,15 @@ export class RestaurantService {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
     }
 
+    // Check if user is admin or restaurant owner
+    
     return this.restaurantModel.findByIdAndDelete(id).exec();
   }
 
-  async approveRestaurant(id: string, userId: string) {
+  async approveRestaurant(id: string) {
     // Check if user is admin
-    const user = await this.userModel.findById(userId);
+   
+    
 
     const restaurant = await this.restaurantModel.findById(id).exec();
 
@@ -217,15 +193,13 @@ export class RestaurantService {
       .findByIdAndUpdate(id, { isActive: false }, { new: true })
       .exec();
   }
-
+/*
   async getRestaurantOrders(restaurantId: string, userId: string) {
     // Find restaurant owned by the user
-    const restaurant = await this.restaurantModel
-      .findOne({
-        _id: new Types.ObjectId(restaurantId),
-        owner: new Types.ObjectId(userId),
-      })
-      .exec();
+    const restaurant = await this.restaurantModel.findOne({ 
+      _id: new Types.ObjectId(restaurantId),
+      owner: new Types.ObjectId(userId)
+    }).exec();
     if (!restaurant) {
       throw new ForbiddenException('You do not own this restaurant');
     }
@@ -237,15 +211,12 @@ export class RestaurantService {
       .populate('customer', 'name email')
       .exec();
   }
-
-  async getRestaurantMenu(restaurantId: string, userId: string) {
+*/
+  async getRestaurantMenu(restaurantId: string) {
     // Find restaurant owned by the user
-    const restaurant = await this.restaurantModel
-      .findOne({
-        _id: new Types.ObjectId(restaurantId),
-        owner: new Types.ObjectId(userId),
-      })
-      .exec();
+    const restaurant = await this.restaurantModel.findOne({ 
+      _id: new Types.ObjectId(restaurantId),
+    }).exec();
     if (!restaurant) {
       throw new ForbiddenException('You do not own this restaurant');
     }
@@ -265,26 +236,21 @@ export class RestaurantService {
     }
 
     // Get dashboard data
-    const [totalOrders, activeOrders, menuItems] = await Promise.all([
-      this.orderModel.countDocuments({ restaurantId: restaurant._id } as any),
-      this.orderModel.countDocuments({
-        restaurantId: restaurant._id,
-        status: { $in: ['PENDING', 'ACCEPTED', 'PREPARING'] },
-      } as any),
-      this.menuItemModel.countDocuments({ restaurant: restaurant._id }),
+    const [menuItems] = await Promise.all([
+      this.menuItemModel.countDocuments({ restaurant: restaurant._id })
     ]);
 
     return {
       restaurant: {
         name: restaurant.name,
         status: restaurant.isActive ? 'Active' : 'Inactive',
-        isApproved: restaurant.isApproved,
+        isApproved: restaurant.isApproved
       },
       stats: {
-        totalOrders,
-        activeOrders,
-        menuItems,
-      },
+       /* totalOrders,
+        activeOrders,*/
+        menuItems
+      }
     };
   }
 
@@ -296,10 +262,7 @@ export class RestaurantService {
     return restaurant;
   }
 
-  async update(
-    id: string,
-    updateData: Partial<Restaurant>,
-  ): Promise<Restaurant | null> {
+  async update(id: string, updateData: Partial<Restaurant>): Promise<Restaurant | null> {
     const restaurant = await this.restaurantModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
@@ -310,7 +273,9 @@ export class RestaurantService {
   }
 
   async delete(id: string): Promise<Restaurant | null> {
-    const restaurant = await this.restaurantModel.findByIdAndDelete(id).exec();
+    const restaurant = await this.restaurantModel
+      .findByIdAndDelete(id)
+      .exec();
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
     }
@@ -322,12 +287,13 @@ export class RestaurantService {
     return this.restaurantModel.find(query).exec();
   }
 
-  async toggleStatus(
-    id: string,
-    isActive: boolean,
-  ): Promise<Restaurant | null> {
+  async toggleStatus(id: string, isActive: boolean): Promise<Restaurant | null> {
     const restaurant = await this.restaurantModel
-      .findByIdAndUpdate(id, { isActive }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { isActive },
+        { new: true }
+      )
       .exec();
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
@@ -335,12 +301,13 @@ export class RestaurantService {
     return restaurant;
   }
 
-  async toggleTemporaryClosure(
-    id: string,
-    isClosed: boolean,
-  ): Promise<Restaurant | null> {
+  async toggleTemporaryClosure(id: string, isClosed: boolean): Promise<Restaurant | null> {
     const restaurant = await this.restaurantModel
-      .findByIdAndUpdate(id, { isTemporarilyClosed: isClosed }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { isTemporarilyClosed: isClosed },
+        { new: true }
+      )
       .exec();
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);

@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   Query,
+  UseGuards,
   Req,
   HttpException,
   HttpStatus,
@@ -19,50 +20,17 @@ import {
 } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { DisputeStatus } from '../dispute/enums/dispute-status.enum';
+import { JwtAuthGuard, Roles } from '@app/common';
+import { RolesGuard } from '@app/common/auth/roles.guard';
 
 @ApiTags('admin')
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // User Account Management
-  @Get('users')
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Returns list of users' })
-  async getAllUsers(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-    @Query('role') role?: string,
-  ) {
-    return this.adminService.getAllUsers(page, limit, role);
-  }
-
-  // @Patch('users/:id/suspend')
-  // @ApiOperation({ summary: 'Suspend user account' })
-  // @ApiResponse({ status: 200, description: 'User account suspended' })
-  // async suspendUser(
-  //   @Param('id') userId: string,
-  //   @Body('reason') reason: string,
-  //   @Req() req: any,
-  // ) {
-  //   try {
-  //     return await this.adminService.suspendUser(userId, reason, req.user.id);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.FORBIDDEN);
-  //   }
-  // }
-
-  // @Patch('users/:id/reactivate')
-  // @ApiOperation({ summary: 'Reactivate user account' })
-  // @ApiResponse({ status: 200, description: 'User account reactivated' })
-  // async reactivateUser(@Param('id') userId: string, @Req() req: any) {
-  //   try {
-  //     return await this.adminService.reactivateUser(userId, req.user.id);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.FORBIDDEN);
-  //   }
-  // }
-
+  @Patch('users/:id/suspend')
+  @ApiOperation({ summary: 'Suspend user account' })
+  @ApiResponse({ status: 200, description: 'User account suspended' })
   // Restaurant Verification
   @Get('restaurants/pending')
   @ApiOperation({ summary: 'Get pending restaurant verifications' })
@@ -77,6 +45,17 @@ export class AdminController {
     return this.adminService.getPendingVerifications(page, limit);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('restaurants')
+  @ApiOperation({ summary: 'Get all restaurants' })
+  @ApiResponse({ status: 200, description: 'Returns list of all restaurants' })
+  async getAllRestaurants(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.adminService.getAllRestaurants(page, limit);
+  }
+
   @Post('restaurants/:id/verify')
   @ApiOperation({ summary: 'Verify restaurant registration' })
   @ApiResponse({
@@ -86,19 +65,13 @@ export class AdminController {
   async verifyRestaurant(
     @Param('id') restaurantId: string,
     @Body('approved') approved: boolean,
-    @Req() req: any,
     @Body('notes') notes?: string,
   ) {
-    try {
-      return await this.adminService.verifyRestaurant(
-        restaurantId,
-        approved,
-        req.user.id,
-        notes,
-      );
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.FORBIDDEN);
-    }
+    return await this.adminService.verifyRestaurant(
+      restaurantId,
+      approved,
+      notes,
+    );
   }
 
   @Patch('restaurants/:id/verification')
@@ -117,17 +90,11 @@ export class AdminController {
       verificationNotes?: string;
       rejectionReason?: string;
     },
-    @Req() req: any,
   ) {
-    try {
-      return await this.adminService.updatePendingVerification(
-        restaurantId,
-        req.user.id,
-        updateData,
-      );
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.FORBIDDEN);
-    }
+    return await this.adminService.updatePendingVerification(
+      restaurantId,
+      updateData,
+    );
   }
 
   // Financial Management

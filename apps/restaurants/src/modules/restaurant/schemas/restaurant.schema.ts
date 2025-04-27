@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
+
 export type RestaurantDocument = Restaurant & Document;
 
 @Schema({ timestamps: true })
@@ -31,7 +32,7 @@ export class Restaurant {
 
   @Prop({ default: true })
   isActive: boolean;
-
+  
   @Prop({ default: false })
   isTemporarilyClosed: boolean;
 
@@ -41,27 +42,8 @@ export class Restaurant {
   @Prop()
   rejectionReason: string;
 
-  @Prop({
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point',
-    },
-    coordinates: {
-      type: [Number],
-      required: true,
-    },
-  })
-  location: {
-    type: string;
-    coordinates: number[];
-  };
-
-  @Prop({ required: true })
-  latitude: number;
-
-  @Prop({ required: true })
-  longitude: number;
+  @Prop({ required: true, enum: ['pending', 'approved', 'resolved', 'rejected'] })
+  status: string;
 }
 
 export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);

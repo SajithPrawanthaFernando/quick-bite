@@ -14,13 +14,16 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@app/common';
+import { RolesGuard } from '@app/common/auth/roles.guard';
 
 @ApiTags('finance')
 @Controller('finance')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class FinanceController {
   constructor(private readonly financeService: FinanceService) {}
-
+/*
   @Get('restaurant/:restaurantId/report')
   @ApiOperation({ summary: 'Generate financial report for a restaurant' })
   @ApiResponse({ status: 200, description: 'Returns the financial report' })
@@ -35,7 +38,8 @@ export class FinanceController {
       new Date(endDate),
     );
   }
-
+    */
+/*
   @Post('restaurant/:restaurantId/payout')
   @ApiOperation({ summary: 'Initiate a payout for a restaurant' })
   @ApiResponse({ status: 201, description: 'Payout initiated successfully' })
@@ -45,14 +49,15 @@ export class FinanceController {
   ) {
     return this.financeService.initiateRestaurantPayout(restaurantId, amount);
   }
-
+    */
+/*
   @Post('payout/:payoutId/complete')
   @ApiOperation({ summary: 'Complete a restaurant payout' })
   @ApiResponse({ status: 200, description: 'Payout completed successfully' })
   async completeRestaurantPayout(@Param('payoutId') payoutId: string) {
     return this.financeService.completeRestaurantPayout(payoutId);
   }
-
+*/
   @Get('restaurant/:restaurantId/transactions')
   @ApiOperation({ summary: 'Get transaction history for a restaurant' })
   @ApiResponse({ status: 200, description: 'Returns transaction history' })

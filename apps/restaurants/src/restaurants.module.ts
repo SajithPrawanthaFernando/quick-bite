@@ -8,12 +8,11 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { CustomerModule } from './customer/customer.module';
 import { MenuModule } from './modules/menu/menu.module';
-import { OrderModule } from './modules/order/order.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { AvailabilityModule } from './modules/availability/availability.module';
 import { RestaurantDashboardModule } from './restaurant-dashboard/restaurant-dashboard.module';
 import configuration from './config/configuration';
-import { AUTH_SERVICE } from '@app/common';
+import { AUTH_SERVICE, DatabaseModule, LoggerModule } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -22,6 +21,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       isGlobal: true,
       load: [configuration],
     }),
+    DatabaseModule,
+    LoggerModule,
     ClientsModule.registerAsync([
       {
         name: AUTH_SERVICE,
@@ -43,7 +44,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     AdminModule,
     CustomerModule,
     MenuModule,
-    OrderModule,
     FinanceModule,
     AvailabilityModule,
     RestaurantDashboardModule,

@@ -10,7 +10,6 @@ import {
   FinancialReport,
   FinancialReportSchema,
 } from './schemas/financial-report.schema';
-import { Order, OrderSchema } from '../order/schemas/order.schema';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AUTH_SERVICE } from '@app/common';
@@ -21,7 +20,7 @@ import { ConfigService } from '@nestjs/config';
     MongooseModule.forFeature([
       { name: FinancialTransaction.name, schema: FinancialTransactionSchema },
       { name: FinancialReport.name, schema: FinancialReportSchema },
-      { name: Order.name, schema: OrderSchema },
+     
     ]),
     EventEmitterModule.forRoot(),
     ClientsModule.registerAsync([

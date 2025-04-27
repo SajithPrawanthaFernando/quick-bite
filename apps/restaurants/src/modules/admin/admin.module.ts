@@ -4,23 +4,24 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
+
 import {
   Restaurant,
   RestaurantSchema,
 } from '../restaurant/schemas/restaurant.schema';
 import { Transaction, TransactionSchema } from './schemas/transaction.schema';
 import { Dispute, DisputeSchema } from '../dispute/schemas/dispute.schema';
-import { AUTH_SERVICE, UserDocument, UserSchema } from '@app/common';
+import { DatabaseModule, LoggerModule, AUTH_SERVICE } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: UserDocument.name, schema: UserSchema },
       { name: Restaurant.name, schema: RestaurantSchema },
       { name: Transaction.name, schema: TransactionSchema },
       { name: Dispute.name, schema: DisputeSchema },
     ]),
+    DatabaseModule,
+    LoggerModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
