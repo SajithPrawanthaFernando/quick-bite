@@ -10,7 +10,6 @@ import {
   FinancialReport,
   FinancialReportDocument,
 } from './schemas/financial-report.schema';
-import { Order } from '../order/schemas/order.schema';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 
@@ -23,50 +22,10 @@ export class FinanceService {
     private readonly transactionModel: Model<FinancialTransactionDocument>,
     @Inject(getModelToken(FinancialReport.name))
     private readonly reportModel: Model<FinancialReportDocument>,
-    @Inject(getModelToken(Order.name))
-    private readonly orderModel: Model<Order>,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async processOrderPayment(order: Order): Promise<void> {
-    const session = await this.transactionModel.db.startSession();
-    session.startTransaction();
-
-    try {
-      // Create order payment transaction
-      const orderPayment = new this.transactionModel({
-        type: TransactionType.ORDER_PAYMENT,
-        status: TransactionStatus.COMPLETED,
-        order: order._id,
-        restaurant: order.restaurantId,
-        amount: order.totalAmount,
-        description: `Payment for order ${order._id}`,
-      });
-
-      // Create platform fee transaction
-      const platformFee = new this.transactionModel({
-        type: TransactionType.PLATFORM_FEE,
-        status: TransactionStatus.COMPLETED,
-        order: order._id,
-        restaurant: order.restaurantId,
-        amount: order.totalAmount * this.PLATFORM_FEE_PERCENTAGE,
-        description: `Platform fee for order ${order._id}`,
-      });
-
-      await Promise.all([
-        orderPayment.save({ session }),
-        platformFee.save({ session }),
-      ]);
-
-      await session.commitTransaction();
-      this.eventEmitter.emit('order.payment.processed', { orderId: order._id });
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
-    }
-  }
+     /* 
 
   async generateFinancialReport(
     restaurantId: string,
@@ -80,12 +39,7 @@ export class FinanceService {
       })
       .exec();
 
-    const orders = await this.orderModel
-      .find({
-        restaurantId: new Types.ObjectId(restaurantId),
-        createdAt: { $gte: startDate, $lte: endDate },
-      })
-      .exec();
+    
 
     // Calculate daily breakdown
     const dailyBreakdown = orders.reduce((acc, order) => {
@@ -199,7 +153,7 @@ export class FinanceService {
     payout.status = TransactionStatus.COMPLETED;
     return payout.save();
   }
-
+*/
   async getRestaurantTransactions(restaurantId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const [transactions, total] = await Promise.all([
@@ -225,7 +179,7 @@ export class FinanceService {
       },
     };
   }
-
+/*
   async processRefund(order: Order, amount: number): Promise<void> {
     const session = await this.transactionModel.db.startSession();
     session.startTransaction();
@@ -268,4 +222,5 @@ export class FinanceService {
       session.endSession();
     }
   }
+    */
 }

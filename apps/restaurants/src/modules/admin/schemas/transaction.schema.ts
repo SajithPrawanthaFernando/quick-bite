@@ -7,14 +7,14 @@ export enum TransactionStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  REFUNDED = 'refunded',
+  REFUNDED = 'refunded'
 }
 
 export enum TransactionType {
   ORDER_PAYMENT = 'order_payment',
   RESTAURANT_PAYOUT = 'restaurant_payout',
   REFUND = 'refund',
-  PLATFORM_FEE = 'platform_fee',
+  PLATFORM_FEE = 'platform_fee'
 }
 
 export enum PaymentMethod {
@@ -22,7 +22,7 @@ export enum PaymentMethod {
   DEBIT_CARD = 'debit_card',
   WALLET = 'wallet',
   CASH = 'cash',
-  BANK_TRANSFER = 'bank_transfer',
+  BANK_TRANSFER = 'bank_transfer'
 }
 
 export type TransactionDocument = Transaction & Document;
@@ -39,8 +39,7 @@ export class PaymentDetails {
   paymentDate: Date;
 }
 
-export const PaymentDetailsSchema =
-  SchemaFactory.createForClass(PaymentDetails);
+export const PaymentDetailsSchema = SchemaFactory.createForClass(PaymentDetails);
 
 @Schema({ timestamps: true })
 export class Transaction {

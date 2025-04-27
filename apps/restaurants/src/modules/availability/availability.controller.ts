@@ -20,6 +20,8 @@ import {
 import { AvailabilityService } from './availability.service';
 import { UpdateAvailabilityDto } from './dto/update-availability.dto';
 import { UpdateSpecialDayDto } from './dto/update-special-day.dto';
+import { JwtAuthGuard } from '@app/common';
+import { RolesGuard } from '@app/common/auth/roles.guard';
 
 @ApiTags('availability')
 @Controller('availability')
@@ -41,6 +43,7 @@ export class AvailabilityController {
   }
 
   @Put('restaurant/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update restaurant availability' })
   @ApiResponse({
@@ -64,6 +67,7 @@ export class AvailabilityController {
   }
 
   @Post('special-day/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add or update a special day' })
   @ApiResponse({
@@ -88,6 +92,7 @@ export class AvailabilityController {
   }
 
   @Delete('special-day/:restaurantId/:date')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remove a special day' })
   @ApiResponse({

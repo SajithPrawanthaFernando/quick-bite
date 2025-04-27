@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import { JwtAuthGuard, Roles } from '@app/common';
 
 @ApiTags('Customer')
 @Controller('customer')

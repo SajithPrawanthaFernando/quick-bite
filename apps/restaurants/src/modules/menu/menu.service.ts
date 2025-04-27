@@ -1,9 +1,5 @@
 // src/modules/menu/menu.service.ts
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import { Model, Types, FilterQuery } from 'mongoose';
 import { MenuItem } from './schemas/menu-item.schema';
@@ -15,17 +11,15 @@ import { getModelToken } from '@nestjs/mongoose';
 @Injectable()
 export class MenuService {
   constructor(
-    @Inject(getModelToken('MenuItem'))
-    private readonly menuItemModel: Model<MenuItem>,
-    @Inject(getModelToken('Restaurant'))
-    private readonly restaurantModel: Model<Restaurant>,
+    @Inject(getModelToken('MenuItem')) private readonly menuItemModel: Model<MenuItem>,
+    @Inject(getModelToken('Restaurant')) private readonly restaurantModel: Model<Restaurant>
   ) {}
 
   async getMenuItems(restaurantId: string, category?: string) {
-    const query: any = {
-      restaurant: new Types.ObjectId(restaurantId),
+    const query: any = { 
+      restaurant: new Types.ObjectId(restaurantId)
     };
-
+    
     if (category) {
       query.category = category;
     }
@@ -37,17 +31,14 @@ export class MenuService {
 
     // Group menu items by category if no specific category is requested
     if (!category) {
-      const menuByCategory = menuItems.reduce(
-        (acc: { [key: string]: MenuItem[] }, item) => {
-          const categoryName = item.category || 'Uncategorized';
-          if (!acc[categoryName]) {
-            acc[categoryName] = [];
-          }
-          acc[categoryName].push(item);
-          return acc;
-        },
-        {},
-      );
+      const menuByCategory = menuItems.reduce((acc: { [key: string]: MenuItem[] }, item) => {
+        const categoryName = item.category || 'Uncategorized';
+        if (!acc[categoryName]) {
+          acc[categoryName] = [];
+        }
+        acc[categoryName].push(item);
+        return acc;
+      }, {});
 
       return menuByCategory;
     }
@@ -65,37 +56,29 @@ export class MenuService {
     return menuItem;
   }
 
-  async createMenuItem(createMenuItemDto: CreateMenuItemDto, userId: string) {
+  async createMenuItem(createMenuItemDto: CreateMenuItemDto) {
     if (!createMenuItemDto.restaurant) {
-      throw new ForbiddenException(
-        'Restaurant ID is required to create a menu item',
-      );
+      throw new ForbiddenException('Restaurant ID is required to create a menu item');
     }
 
     const restaurantId = new Types.ObjectId(createMenuItemDto.restaurant);
-
+    
     // Check if restaurant exists
     const restaurant = await this.restaurantModel.findById(restaurantId).exec();
-
+    
     if (!restaurant) {
-      throw new NotFoundException(
-        `Restaurant with ID ${restaurantId} not found`,
-      );
+      throw new NotFoundException(`Restaurant with ID ${restaurantId} not found`);
     }
-
+    
     // Create menu item
     const menuItem = new this.menuItemModel({
       ...createMenuItemDto,
-      restaurant: restaurantId,
+      restaurant: restaurantId
     });
     return menuItem.save();
   }
 
-  async updateMenuItem(
-    id: string,
-    updateMenuItemDto: UpdateMenuItemDto,
-    userId: string,
-  ) {
+  async updateMenuItem(id: string, updateMenuItemDto: UpdateMenuItemDto) {
     // Get the menu item first
     const menuItem = await this.menuItemModel.findById(id).exec();
     if (!menuItem) {
@@ -106,14 +89,11 @@ export class MenuService {
     const restaurant = await this.restaurantModel
       .findOne({
         _id: menuItem.restaurant,
-        owner: new Types.ObjectId(userId),
       } as FilterQuery<Restaurant>)
       .exec();
 
     if (!restaurant) {
-      throw new ForbiddenException(
-        'You do not have permission to update this menu item',
-      );
+      throw new ForbiddenException('You do not have permission to update this menu item');
     }
 
     const updateData: any = { ...updateMenuItemDto };
@@ -126,7 +106,7 @@ export class MenuService {
       .exec();
   }
 
-  async deleteMenuItem(id: string, userId: string) {
+  async deleteMenuItem(id: string) {
     // Get the menu item first
     const menuItem = await this.menuItemModel.findById(id).exec();
     if (!menuItem) {
@@ -137,14 +117,12 @@ export class MenuService {
     const restaurant = await this.restaurantModel
       .findOne({
         _id: menuItem.restaurant,
-        owner: new Types.ObjectId(userId),
+       
       } as FilterQuery<Restaurant>)
       .exec();
 
     if (!restaurant) {
-      throw new ForbiddenException(
-        'You do not have permission to delete this menu item',
-      );
+      throw new ForbiddenException('You do not have permission to delete this menu item');
     }
 
     return this.menuItemModel.findByIdAndDelete(id).exec();
@@ -161,14 +139,12 @@ export class MenuService {
     const restaurant = await this.restaurantModel
       .findOne({
         _id: menuItem.restaurant,
-        owner: new Types.ObjectId(userId),
+        owner: new Types.ObjectId(userId)
       } as FilterQuery<Restaurant>)
       .exec();
 
     if (!restaurant) {
-      throw new ForbiddenException(
-        'You do not have permission to update this menu item',
-      );
+      throw new ForbiddenException('You do not have permission to update this menu item');
     }
 
     return this.menuItemModel
@@ -176,3 +152,4 @@ export class MenuService {
       .exec();
   }
 }
+

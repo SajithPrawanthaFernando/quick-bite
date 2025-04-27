@@ -10,18 +10,10 @@ export class Dispute {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true })
   order: Types.ObjectId;
 
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Customer',
-    required: true,
-  })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true })
   customer: Types.ObjectId;
 
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant',
-    required: true,
-  })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true })
   restaurant: Types.ObjectId;
 
   @Prop({ required: true })
@@ -33,10 +25,7 @@ export class Dispute {
   @Prop({ type: [String], default: [] })
   evidenceUrls: string[];
 
-  @Prop({
-    required: true,
-    enum: ['pending', 'in_progress', 'resolved', 'rejected'],
-  })
+  @Prop({ required: true, enum: ['pending', 'approved', 'resolved', 'rejected'] })
   status: string;
 
   @Prop({ type: mongoose.Schema.Types.Mixed })

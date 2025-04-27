@@ -70,4 +70,25 @@ services:
       - '3003:3003'
     volumes:
       - .:/usr/src/app
-  
+
+  # mongodb:
+  #   image: mongodb
+  #   container_name: mongodb
+  #   ports:
+  #     - '27017:27017'
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: admin123
+
+  orders:
+    build:
+      context: .
+      dockerfile: ./apps/orders/Dockerfile
+      target: development
+    command: pnpm run start:dev orders
+    env_file:
+      - ./apps/orders/.env
+    ports:
+      - '3008:3008'
+    volumes:
+      - .:/usr/src/app
