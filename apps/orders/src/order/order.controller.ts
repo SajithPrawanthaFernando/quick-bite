@@ -55,7 +55,6 @@ export class OrderController {
     return this.orderService.getAllOrdersForCustomer(customerId);
   }
 
-  @Roles('admin')
   @Put(':orderId/status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Order, OrderDocument } from './schemas/order.schema';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Order, OrderDocument } from "./schemas/order.schema";
+import { CreateOrderDto } from "./dto/create-order.dto";
 
 @Injectable()
 export class OrderService {
@@ -11,10 +11,12 @@ export class OrderService {
   ) {}
 
   async createOrder(dto: CreateOrderDto): Promise<Order> {
+    const orderId = `ORD-${Date.now() % 1000000}-${Math.floor(Math.random() * 100)}`;
     const newOrder = new this.orderModel({
+      orderId,
       ...dto,
-      status: 'pending',
-      paymentStatus: 'unpaid',
+      status: "pending",
+      paymentStatus: "unpaid",
     });
     return newOrder.save();
   }
@@ -32,14 +34,14 @@ export class OrderService {
 
   async cancelOrder(id: string): Promise<Order | null> {
     return this.orderModel
-      .findByIdAndUpdate(id, { status: 'cancelled' }, { new: true })
+      .findByIdAndUpdate(id, { status: "cancelled" }, { new: true })
       .exec();
   }
 
   async getOrderStatusById(orderId: string): Promise<any> {
     const order = await this.orderModel.findById(orderId).exec();
     if (!order) {
-      return { message: 'Order not found' };
+      return { message: "Order not found" };
     }
     return { status: order.status };
   }
@@ -51,7 +53,7 @@ export class OrderService {
   async updateOrderStatus(orderId: string, newStatus: string): Promise<any> {
     const order = await this.orderModel.findById(orderId).exec();
     if (!order) {
-      return { message: 'Order not found' };
+      return { message: "Order not found" };
     }
 
     order.status = newStatus;
@@ -61,6 +63,9 @@ export class OrderService {
   }
 
   async getOrdersOutForDelivery(): Promise<Order[]> {
-    return this.orderModel.find().exec();
+    return this.orderModel
+      .find({ status: "out_for_delivery" })
+      .sort({ createdAt: -1 })
+      .exec();
   }
 }

@@ -34,7 +34,6 @@ export class UsersController {
 
   @Get('all')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   async getAllUsers() {
     return this.usersService.getAllUsers();
   }

@@ -16,14 +16,30 @@ export class DeliveryService {
       _id: new Types.ObjectId(),
       orderId: createDeliveryDto.orderId,
       customerId: createDeliveryDto.customerId,
+      customerName: createDeliveryDto.customerName,
+      customerPhone: createDeliveryDto.customerPhone,
+      totalAmount: createDeliveryDto.totalAmount || 0,
       driverId: createDeliveryDto.driverId,
       driverName: createDeliveryDto.driverName,
+      driverPhone: createDeliveryDto.driverPhone,
       pickupLocation: createDeliveryDto.pickupLocation,
-      deliveryLocation: createDeliveryDto.deliveryLocation,
-      status: "picked",
-      estimatedDeliveryTime: createDeliveryDto.estimatedDeliveryTime,
+      deliveryLocation: {
+        houseNumber: createDeliveryDto.deliveryLocation.houseNumber,
+        lane1: createDeliveryDto.deliveryLocation.lane1,
+        ...(createDeliveryDto.deliveryLocation.lane2 && {
+          lane2: createDeliveryDto.deliveryLocation.lane2,
+        }),
+        city: createDeliveryDto.deliveryLocation.city,
+        district: createDeliveryDto.deliveryLocation.district,
+      },
+      status: createDeliveryDto.status || "driver_assigned",
+      estimatedDeliveryTime: createDeliveryDto.estimatedDeliveryTime
+        ? new Date(createDeliveryDto.estimatedDeliveryTime)
+        : null,
       actualDeliveryTime: null,
-      deliveryNotes: createDeliveryDto.deliveryNotes ?? "",
+      deliveryNotes: createDeliveryDto.deliveryNotes || "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     return this.deliveryModel.create(deliveryEntity);
@@ -46,6 +62,16 @@ export class DeliveryService {
   }
 
   async getDeliveriesByDriver(driverId: string) {
-    return this.deliveryModel.find({ driverId }).sort({ createdAt: -1 }).exec();
+    return this.deliveryModel
+      .find({ driverId, status: { $ne: "delivered" } })
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+  async getDeliveriesByDriverDelivered(driverId: string) {
+    
+    return this.deliveryModel
+      .find({ driverId, status: "delivered"  })
+      .sort({ createdAt: -1 })
+      .exec();
   }
 }

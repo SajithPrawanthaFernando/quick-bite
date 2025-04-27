@@ -5,19 +5,34 @@ import {
   IsObject,
   IsOptional,
   IsDateString,
+  IsNumber,
+  IsEnum,
 } from 'class-validator';
 
-class LocationDto {
+class DeliveryLocationDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  address: string;
+  houseNumber: string;
 
   @IsDefined()
-  latitude: number;
+  @IsNotEmpty()
+  @IsString()
+  lane1: string;
+
+  @IsOptional()
+  @IsString()
+  lane2?: string;
 
   @IsDefined()
-  longitude: number;
+  @IsNotEmpty()
+  @IsString()
+  city: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  district: string;
 }
 
 export class CreateDeliveryDto {
@@ -34,6 +49,20 @@ export class CreateDeliveryDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  customerName: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  customerPhone: string;
+
+  @IsOptional()
+  @IsNumber()
+  totalAmount?: number;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
   driverId: string;
 
   @IsDefined()
@@ -42,16 +71,30 @@ export class CreateDeliveryDto {
   driverName: string;
 
   @IsDefined()
-  @IsObject()
-  pickupLocation: LocationDto;
+  @IsNotEmpty()
+  @IsString()
+  driverPhone: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  pickupLocation: string;
 
   @IsDefined()
   @IsObject()
-  deliveryLocation: LocationDto;
+  deliveryLocation: DeliveryLocationDto;
+
+  @IsOptional()
+  @IsEnum(['driver_assigned', 'picked', 'in_transit', 'delivered', 'cancelled'])
+  status?: string = 'driver_assigned';
 
   @IsOptional()
   @IsDateString()
   estimatedDeliveryTime?: string;
+
+  @IsOptional()
+  @IsDateString()
+  actualDeliveryTime?: string;
 
   @IsOptional()
   @IsString()

@@ -8,6 +8,8 @@ export class Order {
   @Prop()
   customerId: string;
   @Prop()
+  orderId: string;
+  @Prop()
   restuarantId: string;
 
   @Prop({ type: [{ itemId: String, name: String, quantity: Number, price: Number }] })

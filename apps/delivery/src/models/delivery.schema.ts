@@ -10,19 +10,25 @@ export class DeliveryDocument extends AbstractDocument {
   customerId: string;
 
   @Prop({ required: true })
+  customerName: string;
+
+  @Prop({ required: true })
+  customerPhone: string;
+
+  @Prop()
+  totalAmount: number;
+
+  @Prop({ required: true })
   driverId: string;
 
   @Prop({ required: true })
   driverName: string;
 
-  @Prop({ type: Object, required: true })
-  pickupLocation: {
-    houseNumber: string;
-    lane1: string;
-    lane2?: string;
-    city: string;
-    district: string;
-  };
+  @Prop({ required: true })
+  driverPhone: string;
+
+  @Prop({ required: true })
+  pickupLocation: string;
   
   @Prop({ type: Object, required: true })
   deliveryLocation: {
@@ -33,7 +39,7 @@ export class DeliveryDocument extends AbstractDocument {
     district: string;
   };
 
-  @Prop({ enum: ['picked', 'in_transit', 'delivered', 'cancelled'], default: 'picked' })
+  @Prop({ enum: ['driver_assigned','picked', 'in_transit', 'delivered', 'cancelled'], default: 'driver_assigned' })
   status: string;
 
   @Prop()
