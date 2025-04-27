@@ -21,19 +21,16 @@ export class CartController {
     private readonly orderService: OrderService, // Inject OrderService
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post(':customerId/add')
   async addItem(@Param('customerId') customerId: string, @Body() item: any) {
     return this.cartService.addToCart(customerId, item);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':customerId')
   async viewCart(@Param('customerId') customerId: string) {
     return this.cartService.getCart(customerId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':customerId/item/:itemId')
   async removeItem(
     @Param('customerId') customerId: string,
@@ -42,13 +39,11 @@ export class CartController {
     return this.cartService.removeItem(customerId, itemId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':customerId/clear')
   async clearCart(@Param('customerId') customerId: string) {
     return this.cartService.clearCart(customerId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post(':customerId/checkout')
   async checkout(
     @Param('customerId') customerId: string,
@@ -80,7 +75,6 @@ export class CartController {
     return order;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':customerId/item/:itemId')
   async updateItemQuantity(
     @Param('customerId') customerId: string,

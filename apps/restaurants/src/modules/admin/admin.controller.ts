@@ -45,7 +45,6 @@ export class AdminController {
     return this.adminService.getPendingVerifications(page, limit);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('restaurants')
   @ApiOperation({ summary: 'Get all restaurants' })
   @ApiResponse({ status: 200, description: 'Returns list of all restaurants' })

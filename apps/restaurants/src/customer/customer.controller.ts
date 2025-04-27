@@ -25,7 +25,6 @@ import { JwtAuthGuard, Roles } from '@app/common';
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('restaurants')
   @ApiOperation({ summary: 'Get all approved restaurants' })
   @ApiQuery({ name: 'page', required: false, type: Number })
