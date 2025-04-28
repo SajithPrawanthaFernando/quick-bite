@@ -1,6 +1,16 @@
-import { IsString, IsNotEmpty, IsArray, ValidateNested, IsNumber, Min, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsArray,
+  ValidateNested,
+  IsNumber,
+  Min,
+  IsOptional,
+  IsDefined,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateChargeDto } from '@app/common';
 
 export class OrderItemDto {
   @ApiProperty({ example: '507f1f77bcf86cd799439011' })
@@ -49,5 +59,5 @@ export enum OrderStatus {
   REJECTED = 'rejected',
   PREPARING = 'preparing',
   READY_FOR_PICKUP = 'ready_for_pickup',
-  COMPLETED = 'completed'
+  COMPLETED = 'completed',
 }

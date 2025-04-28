@@ -29,6 +29,11 @@ export class DeliveryController {
   async getDeliveriesByDriver(@Param("id") id: string) {
     return this.deliveryService.getDeliveriesByDriver(id);
   }
+  @Get(":id/by-user-ongoing")
+  @UseGuards(JwtAuthGuard)
+  async getDeliveriesByUser(@Param("id") id: string) {
+    return this.deliveryService.getDeliveriesByUser(id);
+  }
   @Get(":id/by-driver-delivered")
   @UseGuards(JwtAuthGuard)
   async getDeliveriesByDriverDelivered(@Param("id") id: string) {

@@ -67,6 +67,12 @@ export class DeliveryService {
       .sort({ createdAt: -1 })
       .exec();
   }
+  async getDeliveriesByUser(customerId: string) {
+    return this.deliveryModel
+      .find({ customerId, status: { $ne: "delivered" } })
+      .sort({ createdAt: -1 })
+      .exec();
+  }
   async getDeliveriesByDriverDelivered(driverId: string) {
     
     return this.deliveryModel

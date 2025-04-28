@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { JwtAuthGuard, Roles } from '@app/common';
+import { CurrentUser, JwtAuthGuard, Roles, UserDto } from '@app/common';
 
 @Controller('orders')
 export class OrderController {
@@ -19,8 +19,12 @@ export class OrderController {
   }
 
   @Post()
-  async createOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.createOrder(createOrderDto);
+  async createOrder(
+    @Body() createOrderDto: CreateOrderDto,
+    @CurrentUser() user: UserDto,
+  ) {
+    console.log('Creating order for user:', user);
+    return this.orderService.createOrder(createOrderDto, user);
   }
 
   @Get('out-for-delivery')
@@ -30,8 +34,6 @@ export class OrderController {
 
   @Get(':id')
   async getOrder(@Param('id') id: string) {
-    console.log('called ++++++++++++++++++++++++');
-
     return this.orderService.getOrder(id);
   }
 
@@ -52,6 +54,7 @@ export class OrderController {
 
   @Get('customer/:customerId/orders')
   async getCustomerOrders(@Param('customerId') customerId: string) {
+
     return this.orderService.getAllOrdersForCustomer(customerId);
   }
 

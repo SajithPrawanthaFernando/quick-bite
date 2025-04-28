@@ -1,23 +1,54 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Order, OrderDocument } from "./schemas/order.schema";
-import { CreateOrderDto } from "./dto/create-order.dto";
+
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Order, OrderDocument } from './schemas/order.schema';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { PAYMENTS_SERVICE, UserDto } from '@app/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    @Inject(PAYMENTS_SERVICE) private readonly paymentsService: ClientProxy,
   ) {}
 
-  async createOrder(dto: CreateOrderDto): Promise<Order> {
+  async createOrder(
+    dto: CreateOrderDto,
+    { email, _id: userId, phone }: UserDto,
+  ): Promise<Order> {
     const orderId = `ORD-${Date.now() % 1000000}-${Math.floor(Math.random() * 100)}`;
+
+    let paymentCharge;
+    try {
+      paymentCharge = await lastValueFrom(
+        this.paymentsService.send('create_charge', {
+          amount: dto.totalAmount,
+          email,
+          phone,
+          card: dto.charge.card,
+        }),
+      );
+    } catch (error) {
+      console.error('Payment failed:', error);
+      throw new InternalServerErrorException('Payment processing failed');
+    }
+
     const newOrder = new this.orderModel({
       orderId,
       ...dto,
-      status: "pending",
-      paymentStatus: "unpaid",
+      status: 'pending',
+      paymentStatus: 'pending',
+      invoiceId: paymentCharge.id,
+      customerId: userId,
     });
+
     return newOrder.save();
   }
 
@@ -34,7 +65,7 @@ export class OrderService {
 
   async cancelOrder(id: string): Promise<Order | null> {
     return this.orderModel
-      .findByIdAndUpdate(id, { status: "cancelled" }, { new: true })
+      .findByIdAndUpdate(id, { status: 'cancelled' }, { new: true })
       .exec();
   }
 
@@ -61,7 +92,6 @@ export class OrderService {
 
     return { message: `Order status updated to ${newStatus}`, order };
   }
-
   async getOrdersOutForDelivery(): Promise<Order[]> {
     return this.orderModel
       .find({ status: "out_for_delivery" })
