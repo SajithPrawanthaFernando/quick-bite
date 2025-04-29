@@ -6,7 +6,7 @@ import { CreateChargeDto } from '@app/common';
 
 export class CreateOrderDto {
   customerId: string;
-  restuarantId: string;
+  restuarantId?: string;
   items: {
     itemId: string;
     name: string;

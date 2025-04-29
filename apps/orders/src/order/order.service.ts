@@ -1,4 +1,3 @@
-
 import {
   Inject,
   Injectable,
@@ -47,6 +46,7 @@ export class OrderService {
       paymentStatus: 'pending',
       invoiceId: paymentCharge.id,
       customerId: userId,
+      restuarantId: dto.restuarantId,
     });
 
     return newOrder.save();
@@ -72,7 +72,7 @@ export class OrderService {
   async getOrderStatusById(orderId: string): Promise<any> {
     const order = await this.orderModel.findById(orderId).exec();
     if (!order) {
-      return { message: "Order not found" };
+      return { message: 'Order not found' };
     }
     return { status: order.status };
   }
@@ -84,7 +84,7 @@ export class OrderService {
   async updateOrderStatus(orderId: string, newStatus: string): Promise<any> {
     const order = await this.orderModel.findById(orderId).exec();
     if (!order) {
-      return { message: "Order not found" };
+      return { message: 'Order not found' };
     }
 
     order.status = newStatus;
@@ -94,7 +94,7 @@ export class OrderService {
   }
   async getOrdersOutForDelivery(): Promise<Order[]> {
     return this.orderModel
-      .find({ status: "out_for_delivery" })
+      .find({ status: 'out_for_delivery' })
       .sort({ createdAt: -1 })
       .exec();
   }
