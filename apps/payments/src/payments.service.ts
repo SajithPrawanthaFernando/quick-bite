@@ -34,10 +34,10 @@ export class PaymentsService {
       text: `Your payment of $${amount} has completed successfully.`,
     });
 
-    // this.notificationsService.emit('notify_sms', {
-    //   to: phone,
-    //   message: `Your payment of $${amount} has completed successfully.`,
-    // });
+    this.notificationsService.emit('notify_sms', {
+      to: phone,
+      message: `Your payment of $${amount} has completed successfully.`,
+    });
 
     return paymentIntent;
   }

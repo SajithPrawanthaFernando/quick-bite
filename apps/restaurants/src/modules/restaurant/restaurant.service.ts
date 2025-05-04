@@ -113,15 +113,15 @@ export class RestaurantService {
   }
   async getRestaurantByOwnerId(ownerId: string) {
     const restaurant = await this.restaurantModel
-    .findOne({ owner: new Types.ObjectId(ownerId) })
-    .exec();
-    
+      .findOne({ owner: new Types.ObjectId(ownerId) })
+      .exec();
+
     if (!restaurant) {
       throw new NotFoundException(
         `Restaurant with owner ID ${ownerId} not found`,
       );
     }
-    
+
     return restaurant;
   }
 
@@ -244,9 +244,6 @@ export class RestaurantService {
         owner: new Types.ObjectId(restaurantId),
       })
       .exec();
-    if (!restaurant) {
-      throw new ForbiddenException('You do not own this restaurant');
-    }
 
     // Get menu items for this restaurant
     return this.menuItemModel
