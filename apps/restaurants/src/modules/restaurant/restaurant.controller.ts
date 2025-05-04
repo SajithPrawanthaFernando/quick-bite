@@ -45,6 +45,13 @@ import {
     async getRestaurantById(@Param('id') id: string) {
       return this.restaurantService.getRestaurantById(id);
     }
+    @Get('owner/:id')
+    @ApiOperation({ summary: 'Get restaurant by owner ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Return restaurant details' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Restaurant not found' })
+    async getRestaurantByOwnerId(@Param('id') id: string) {
+      return this.restaurantService.getRestaurantByOwnerId(id);
+    }
   
     @Put(':id')
     @UseGuards(JwtAuthGuard)
